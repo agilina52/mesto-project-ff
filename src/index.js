@@ -5,12 +5,10 @@ import {
   openModal,
   closeOverlay,
   closeBtn,
+  setLoadingState,
+  cleanUpForm,
 } from "./components/modal.js";
-import {
-  enableValidation,
-  toggleButtonState,
-  clearValidation,
-} from "./components/validation.js";
+import { enableValidation, clearValidation } from "./components/validation.js";
 import {
   updateAvatar,
   addCard,
@@ -89,39 +87,35 @@ function fillUserHeader(userProfile) {
   userAvatar.style.backgroundImage = `url("${userProfile.avatar}")`;
 }
 
-
 const handleFormSubmitProfile = (evt) => {
   evt.preventDefault();
   const buttonSave = modalEditProfile.querySelector(".popup__button");
-  const textButton = buttonSave.textContent;
-  buttonSave.textContent = "Сохранить...";
+  setLoadingState(buttonSave, true);
 
   const nameValue = profileNameInput.value;
   const jobValue = jobInput.value;
 
-  closeModal(modalEditProfile);
   updateProfile({
     name: nameValue,
     about: jobValue,
   })
     .then((result) => {
-      console.log(result);
+      currentUser = result;
       fillUserHeader(result);
+      closeModal(modalEditProfile);
     })
     .catch((error) => {
       console.log(error);
     })
     .finally(() => {
-      buttonSave.textContent = textButton;
-      closeModal(modalAddCard);
+      setLoadingState(buttonSave, false);
     });
 };
 
 const handleFormSubmitNewCard = (evt) => {
   evt.preventDefault();
   const buttonSave = modalAddCard.querySelector(".popup__button");
-  const textButton = buttonSave.textContent;
-  buttonSave.textContent = "Сохранить...";
+  setLoadingState(buttonSave, true);
 
   const newCardData = {
     name: inputNameFormNewCard.value,
@@ -140,15 +134,15 @@ const handleFormSubmitNewCard = (evt) => {
 
       cardList.prepend(cardElement);
       console.log(result);
+      inputNameFormNewCard.value = "";
+      inputLinkFormNewCard.value = "";
+      closeModal(modalAddCard);
     })
     .catch((error) => {
       console.log("Ошибка при создании карточки:", error);
     })
     .finally(() => {
-      buttonSave.textContent = textButton;
-      inputNameFormNewCard.value = "";
-      inputLinkFormNewCard.value = "";
-      closeModal(modalAddCard);
+      setLoadingState(buttonSave, false);
     });
 };
 
@@ -159,48 +153,43 @@ const handleFormSubmitAvatar = (evt) => {
   );
   const userAvatar = document.querySelector(".profile__image");
   const buttonSave = modalEditAvatar.querySelector(".popup__button");
-  const textButton = buttonSave.textContent;
-  buttonSave.textContent = "Сохранить...";
+  setLoadingState(buttonSave, true);
 
   const urlAvatarValue = urlAvatarInput.value;
   updateAvatar(urlAvatarValue)
     .then((result) => {
       console.log(result);
       userAvatar.style.backgroundImage = `url("${result.avatar}")`;
+      closeModal(modalEditAvatar);
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.log(error);
     })
-    .finally(function () {
-      buttonSave.textContent = textButton;
-      closeModal(modalEditAvatar);
+    .finally(() => {
+      setLoadingState(buttonSave, false);
     });
 };
 
-// Открытие модального окна редактирования автара
-buttonEditAvatar.addEventListener("click", () => {
-  openModal(modalEditAvatar);
+const handleButtonEditAvatar = () => {
   clearValidation(modalEditAvatar, validationOptions);
-});
+  openModal(modalEditAvatar);  
+}
 
-// Открытие модального окна профиля
-buttonEditProfile.addEventListener("click", () => {
+const handleButtonEditProfile = () => {
   fillProfileForm();
-  openModal(modalEditProfile);
   clearValidation(modalEditProfile, validationOptions);
-});
+  openModal(modalEditProfile);
+}
 
-// Открытие модального окна добавления карточки
-buttonAddCard.addEventListener("click", () => {
+const handleButtonAddCard = () => {
+  cleanUpForm(modalAddCard);
+  clearValidation(modalAddCard, validationOptions);
   openModal(modalAddCard);
-  const inputList = Array.from(
-    modalAddCard.querySelector(validationOptions.formSelector)
-  );
-  const buttonElement = modalAddCard.querySelector(
-    validationOptions.submitButtonSelector
-  );
-  toggleButtonState(inputList, buttonElement, validationOptions);
-});
+}
+
+buttonEditAvatar.addEventListener("click", handleButtonEditAvatar);
+buttonEditProfile.addEventListener("click", handleButtonEditProfile);
+buttonAddCard.addEventListener("click", handleButtonAddCard);
 
 formModalAddCard.addEventListener("submit", handleFormSubmitNewCard);
 formEditProfile.addEventListener("submit", handleFormSubmitProfile);
@@ -218,9 +207,9 @@ enableValidation(validationOptions);
 const promises = [getUser(), getCards()];
 Promise.all(promises)
   .then((results) => {
-    console.log(results);
-    currentUser = results[0];
-    results[1].forEach(function (element) {
+    const [user, cards] = results;
+    currentUser = user;
+    cards.forEach(function (element) {
       const cardElement = createCard(
         element,
         deleteCard,
@@ -230,7 +219,7 @@ Promise.all(promises)
       );
       cardList.append(cardElement);
     });
-    fillUserHeader(results[0]);
+    fillUserHeader(user);
   })
   .catch((err) => {
     console.log(err);

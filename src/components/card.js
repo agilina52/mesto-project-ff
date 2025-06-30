@@ -1,5 +1,5 @@
 // Функция создания
-import { deleteCardFromServer, like, unlike, updateAvatar } from "./api";
+import { deleteCardFromServer, setLikeCard, setUnlikeCard } from "./api";
 const cardTemplate = document.querySelector("#card-template").content;
 
 export function createCard(
@@ -50,19 +50,33 @@ export function createCard(
 export function likeCard(id, likeButton, likeCount) {
   if (likeButton.classList.contains("card__like-button_is-active")) {
     likeButton.classList.remove("card__like-button_is-active");
-    unlike(id).then((result) => {
-      likeCount.textContent = result.likes.length;
-    });
+    setUnlikeCard(id)
+      .then((result) => {
+        likeCount.textContent = result.likes.length;
+      })
+      .catch((error) => {
+        throw new Error("ошибка");
+      });
   } else {
     likeButton.classList.add("card__like-button_is-active");
-    like(id).then((result) => {
-      likeCount.textContent = result.likes.length;
-    });
+    setLikeCard(id)
+      .then((result) => {
+        likeCount.textContent = result.likes.length;
+      })
+      .catch((error) => {
+        throw new Error("ошибка");
+      });
   }
 }
 
 export function deleteCard(deleteButton, id) {
-  deleteCardFromServer(id);
   const cardDelete = deleteButton.closest(".card");
-  cardDelete.remove();
+  deleteCardFromServer(id)
+    .then(() => {
+      cardDelete.remove();
+    })
+    .catch((error) => {
+      throw new Error("ошибка");
+    });
 }
+

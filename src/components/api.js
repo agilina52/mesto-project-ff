@@ -7,25 +7,16 @@ const config = {
 };
 
 const response = (url, fetchOptions) => {
-  return new Promise((resolve, reject) => {
-    fetch(`${config.baseUrl}${url}`, fetchOptions)
-      .then((res) => {
-        if (!res.ok) {
-          console.log("Запрос не обработан");
-          throw new Error("Error");
-        }
+  return fetch(`${config.baseUrl}${url}`, fetchOptions)
+      .then(res => {
+      if (res.ok) {
         return res.json();
-      })
-      .then((result) => {
-        console.log(result);
-        resolve(result);
-      })
-      .catch((error) => {
-        console.log(error);
-        reject("Запрос отклонён");
-      });
-  });
-};
+      }
+
+      // если ошибка, отклоняем промис
+      return Promise.reject(`Ошибка: ${res.status}`);
+    });
+  };
 
 export const deleteCardFromServer = (cardId) =>
   response(`/cards/${cardId}`, {
@@ -33,13 +24,13 @@ export const deleteCardFromServer = (cardId) =>
       headers: config.headers,
     });
 
-export const like = (cardId) =>
+export const setLikeCard = (cardId) =>
   response(`/cards/likes/${cardId}`, {
       method: "PUT",
       headers: config.headers,
     });
 
-export const unlike = (cardId) =>
+export const setUnlikeCard = (cardId) =>
   response(`/cards/likes/${cardId}`, {
       method: "DELETE",
       headers: config.headers,

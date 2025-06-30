@@ -30,3 +30,20 @@ export function closeBtn(event) {
     closeModal(modal);
   }
 }
+
+export function setLoadingState(
+  buttonElement,
+  isLoading,
+  defaultText = "Сохранить",
+  loadingText = "Сохранение..."
+) {
+  buttonElement.textContent = isLoading ? loadingText : defaultText;
+  buttonElement.disabled = isLoading;
+}
+
+export function cleanUpForm(formElement) {
+  const inputList = Array.from(formElement.querySelectorAll("input"));
+  inputList.forEach(element => {
+    element.value = "";
+  })
+}

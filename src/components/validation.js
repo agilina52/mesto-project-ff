@@ -6,17 +6,14 @@ export const showInputError = (
   options
 ) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-  console.log("!");
   inputElement.classList.add(options.inputErrorClass);
   errorElement.textContent = errorMessage;
   errorElement.classList.add(options.errorClass);
-  console.log("ошибка");
 };
 
 // Функция скрытия ошибки
 export const hideInputError = (formElement, inputElement, options) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-  console.log();
   inputElement.classList.remove(options.inputErrorClass);
   errorElement.classList.remove(options.errorClass);
   errorElement.textContent = "";
@@ -65,7 +62,7 @@ export const setEventListeners = (formElement, options) => {
     formElement.querySelectorAll(options.inputSelector)
   );
   const buttonElement = formElement.querySelector(options.submitButtonSelector);
-  
+
   // Инициализация состояния кнопки
   toggleButtonState(inputList, buttonElement, options);
 
@@ -82,10 +79,6 @@ export const enableValidation = (options) => {
   const formList = Array.from(document.querySelectorAll(options.formSelector));
 
   formList.forEach((formElement) => {
-    formElement.addEventListener("submit", (evt) => {
-      evt.preventDefault();
-    });
-
     setEventListeners(formElement, options);
   });
 };
@@ -97,4 +90,8 @@ export const clearValidation = function (modalForm, options) {
   formInputList.forEach((formInput) => {
     hideInputError(modalForm, formInput, options);
   });
+  const buttonElement = modalForm.querySelector(
+    options.submitButtonSelector
+  );
+  toggleButtonState(formInputList, buttonElement, options);
 };
