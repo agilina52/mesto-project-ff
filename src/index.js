@@ -5,8 +5,6 @@ import {
   openModal,
   closeOverlay,
   closeBtn,
-  setLoadingState,
-  cleanUpForm,
 } from "./components/modal.js";
 import { enableValidation, clearValidation } from "./components/validation.js";
 import {
@@ -172,20 +170,20 @@ const handleFormSubmitAvatar = (evt) => {
 
 const handleButtonEditAvatar = () => {
   clearValidation(modalEditAvatar, validationOptions);
-  openModal(modalEditAvatar);  
-}
+  openModal(modalEditAvatar);
+};
 
 const handleButtonEditProfile = () => {
   fillProfileForm();
   clearValidation(modalEditProfile, validationOptions);
   openModal(modalEditProfile);
-}
+};
 
 const handleButtonAddCard = () => {
   cleanUpForm(modalAddCard);
   clearValidation(modalAddCard, validationOptions);
   openModal(modalAddCard);
-}
+};
 
 buttonEditAvatar.addEventListener("click", handleButtonEditAvatar);
 buttonEditProfile.addEventListener("click", handleButtonEditProfile);
@@ -224,3 +222,20 @@ Promise.all(promises)
   .catch((err) => {
     console.log(err);
   });
+
+  function setLoadingState(
+  buttonElement,
+  isLoading,
+  defaultText = "Сохранить",
+  loadingText = "Сохранение..."
+) {
+  buttonElement.textContent = isLoading ? loadingText : defaultText;
+  buttonElement.disabled = isLoading;
+}
+
+function cleanUpForm(formElement) {
+  const inputList = Array.from(formElement.querySelectorAll("input"));
+  inputList.forEach(element => {
+    element.value = "";
+  })
+}
