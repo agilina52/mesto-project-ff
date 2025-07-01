@@ -103,7 +103,7 @@ const handleFormSubmitProfile = (evt) => {
       closeModal(modalEditProfile);
     })
     .catch((error) => {
-      console.log(error);
+      console.log("Ошибка при редактировании формы профиля", error);
     })
     .finally(() => {
       setLoadingState(buttonSave, false);
@@ -137,7 +137,7 @@ const handleFormSubmitNewCard = (evt) => {
       closeModal(modalAddCard);
     })
     .catch((error) => {
-      console.log("Ошибка при создании карточки:", error);
+      console.log("Ошибка при создании карточки", error);
     })
     .finally(() => {
       setLoadingState(buttonSave, false);
@@ -161,7 +161,7 @@ const handleFormSubmitAvatar = (evt) => {
       closeModal(modalEditAvatar);
     })
     .catch((error) => {
-      console.log(error);
+      console.log(("Ошибка при редактировании аватара", error));
     })
     .finally(() => {
       setLoadingState(buttonSave, false);
@@ -220,7 +220,7 @@ Promise.all(promises)
     fillUserHeader(user);
   })
   .catch((err) => {
-    console.log(err);
+    console.log("Ошибка", err);
   });
 
   function setLoadingState(

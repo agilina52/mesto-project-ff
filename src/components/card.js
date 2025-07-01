@@ -55,7 +55,7 @@ export function likeCard(id, likeButton, likeCount) {
         likeCount.textContent = result.likes.length;
       })
       .catch((error) => {
-        console.log("Ошибка снятия лайка карточки:", error);
+        console.log("Ошибка снятия лайка карточки", error);
       });
   } else {
     likeButton.classList.add("card__like-button_is-active");
@@ -64,7 +64,7 @@ export function likeCard(id, likeButton, likeCount) {
         likeCount.textContent = result.likes.length;
       })
       .catch((error) => {
-        console.log("Ошибка добавления лайка карточки:", error);
+        console.log("Ошибка добавления лайка карточки", error);
       });
   }
 }
@@ -76,7 +76,7 @@ export function deleteCard(deleteButton, id) {
       cardDelete.remove();
     })
     .catch((error) => {
-      console.log("Ошибка при удалении карточки:", error);
+      console.log("Ошибка при удалении карточки", error);
     });
 }
 
